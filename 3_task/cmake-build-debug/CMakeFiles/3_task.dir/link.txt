@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/3_task.dir/main.cpp.o CMakeFiles/3_task.dir/graph.cpp.o CMakeFiles/3_task.dir/factory.cpp.o -o 3_task 

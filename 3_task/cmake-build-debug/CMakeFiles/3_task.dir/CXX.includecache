@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ghost/CODE/Practicum7Semester/3_task/graph.cpp
+graph.h
+/home/ghost/CODE/Practicum7Semester/3_task/graph.h
+
+/home/ghost/CODE/Practicum7Semester/3_task/graph.h
+iostream
+-
+string
+-
+vector
+-
+set
+-
+map
+-
+stdexcept
+-
+memory
+-
+queue
+-
+

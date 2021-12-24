@@ -1,0 +1,5 @@
+if(EXISTS "/home/ghost/CODE/Practicum7Semester/3_task/cmake-build-debug/hello_test[1]_tests.cmake")
+  include("/home/ghost/CODE/Practicum7Semester/3_task/cmake-build-debug/hello_test[1]_tests.cmake")
+else()
+  add_test(hello_test_NOT_BUILT hello_test_NOT_BUILT)
+endif()

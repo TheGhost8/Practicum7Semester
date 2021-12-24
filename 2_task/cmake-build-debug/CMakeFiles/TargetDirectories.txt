@@ -1,0 +1,3 @@
+/home/ghost/CODE/Practicum7Semester/2_task/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/ghost/CODE/Practicum7Semester/2_task/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/ghost/CODE/Practicum7Semester/2_task/cmake-build-debug/CMakeFiles/2_task.dir
