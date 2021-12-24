@@ -5,7 +5,24 @@
 #include "Schedule.h"
 
 using graph = std::map<std::pair<size_t, size_t>, std::set<size_t>, Comparator>;
+/*
+Schedule::Schedule(graph newJobGraph, char a) : jobGraph(newJobGraph) {
+    schedule.reserve(4);
+    schedule.push_back(std::vector<std::pair<size_t, size_t>>());
+    schedule.push_back(std::vector<std::pair<size_t, size_t>>());
+    schedule.push_back(std::vector<std::pair<size_t, size_t>>());
+    schedule.push_back(std::vector<std::pair<size_t, size_t>>());
+    schedule[1].push_back(std::make_pair(0, 111));
+    schedule[1].push_back(std::make_pair(2, 130));
+    schedule[2].push_back(std::make_pair(3, 111));
+    schedule[2].push_back(std::make_pair(1, 131));
+    schedule[3].push_back(std::make_pair(4, 77));
+    schedule[3].push_back(std::make_pair(0, 77));
+    schedule[3].push_back(std::make_pair(5, 85));
 
+    scheduleCorrect();
+}
+*/
 Schedule::Schedule(size_t procs) {
     schedule.reserve(procs);
     for (size_t i = 0; i < procs; ++i) {
@@ -62,13 +79,13 @@ Schedule::Schedule(graph newJobGraph, size_t procs) : jobGraph(newJobGraph) {
     */
     computeStateEnergy();
 }
-
+/*
 Schedule::Schedule(const Schedule &copied_schedule) {
     jobGraph = copied_schedule.jobGraph;
     schedule = copied_schedule.schedule;
     energy = copied_schedule.energy;
 }
-
+*/
 void Schedule::computeStateEnergy() {
     size_t newEnergy = 0, maxTime = 0, numEmptyProc = 0, currentTime = 0;
     for (auto &i : schedule) {
@@ -97,9 +114,9 @@ void Schedule::clearSchedule() {
 }
 
 bool Schedule::scheduleCorrect() {
-    size_t start_time = 0;
+    size_t start_time = 0, work_time = 0;
     std::map<size_t, size_t> jobNumberTimes;
-    std::map<std::pair<size_t, size_t>, std::pair<size_t, size_t>> jobTimes;
+    std::map<std::pair<size_t, size_t>, std::pair<std::optional<size_t>, size_t>> jobTimes;
 
     for (auto &proc : schedule) {
         start_time = 0;
@@ -113,9 +130,25 @@ bool Schedule::scheduleCorrect() {
     }
 
     for (auto &job : jobGraph) {
+        start_time = 0;
         for (auto &dependentJob : job.second) {
-            jobTimes[job.first].first += jobNumberTimes[dependentJob];
+            if (jobNumberTimes[dependentJob] > start_time) {
+                start_time = jobNumberTimes[dependentJob];
+                for (auto &job2 : jobGraph) {
+                    if (job2.first.first == dependentJob) {
+                        work_time = job2.first.second;
+                    }
+                }
+            }
+            else if (jobNumberTimes[dependentJob] == start_time) {
+                for (auto &job2 : jobGraph) {
+                    if ((job2.first.first == dependentJob) && (job2.first.second > work_time)) {
+                        work_time = job2.first.second;
+                    }
+                }
+            }
         }
+        jobTimes[job.first].first = start_time + work_time;
         if (jobTimes[job.first].first > jobTimes[job.first].second) {
             return false;
         }

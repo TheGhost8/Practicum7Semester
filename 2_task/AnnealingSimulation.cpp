@@ -9,13 +9,13 @@ AnnealingSimulation::AnnealingSimulation(graph &startGraph, size_t procs) {
     best_schedule = std::make_unique<Schedule>(startGraph, procs);
     new_schedule = std::make_unique<Schedule>(procs);
 }
-
+/*
 AnnealingSimulation::AnnealingSimulation(const AnnealingSimulation &copied_simulation) {
     current_schedule = std::make_unique<Schedule>(*copied_simulation.current_schedule);
     best_schedule = std::make_unique<Schedule>(*copied_simulation.best_schedule);
     new_schedule = std::make_unique<Schedule>(*copied_simulation.new_schedule);
 }
-
+*/
 void AnnealingSimulation::start() {
     std::mt19937 twisterEngine;
     twisterEngine.seed(time(NULL));
@@ -160,11 +160,16 @@ void AnnealingSimulation::firstTypeMutation(size_t proc, size_t taskToMove) {
         }
         start_time += new_schedule->schedule[proc][leftJobBorder].second;
     }
-    if (leftJobBorder + 1 < new_schedule->schedule[proc].size()) {
+    if (leftJobBorder < new_schedule->schedule[proc].size()) {
         new_schedule->schedule[proc].erase(new_schedule->schedule[proc].begin() + taskToMove);
-        std::uniform_int_distribution<size_t> uniformDistributionTask(leftJobBorder + 1, new_schedule->schedule[proc].size() - 1);
+        std::uniform_int_distribution<size_t> uniformDistributionTask(leftJobBorder, new_schedule->schedule[proc].size());
         taskToInsert = uniformDistributionTask(twisterEngine);
-        new_schedule->schedule[proc].insert(new_schedule->schedule[proc].begin() + taskToInsert, saved_task);
+        if (taskToInsert == new_schedule->schedule[proc].size()) {
+            new_schedule->schedule[proc].push_back(saved_task);
+        }
+        else {
+            new_schedule->schedule[proc].insert(new_schedule->schedule[proc].begin() + taskToInsert, saved_task);
+        }
     }
 }
 
@@ -193,7 +198,7 @@ void AnnealingSimulation::secondTypeMutation(size_t procRemove, size_t procInser
         new_schedule->schedule[procRemove].erase(new_schedule->schedule[procRemove].begin() + taskToMove);
     }
     else {
-        new_schedule->schedule[procRemove].insert(new_schedule->schedule[procRemove].begin() + job, new_schedule->schedule[procRemove][taskToMove]);
+        new_schedule->schedule[procInsert].insert(new_schedule->schedule[procInsert].begin() + job, new_schedule->schedule[procRemove][taskToMove]);
         new_schedule->schedule[procRemove].erase(new_schedule->schedule[procRemove].begin() + taskToMove);
     }
 }

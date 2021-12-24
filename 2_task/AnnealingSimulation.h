@@ -6,7 +6,7 @@
 #pragma once
 
 static const size_t start_temperature = 10E5;
-static const size_t max_iterations = 100;
+static const size_t max_iterations = 10;
 static const size_t max_iterations_with_no_changes = 100;
 static const size_t MAX_ITERATION_IN = 100;
 
@@ -19,7 +19,7 @@ private:
 
 public:
     AnnealingSimulation(graph &startGraph, size_t procs);
-    AnnealingSimulation(const AnnealingSimulation &copied_simulation);
+    // AnnealingSimulation(const AnnealingSimulation &copied_simulation);
 
     size_t getBestEnergy() { return best_schedule->getEnergy(); };
     size_t getCurrentEnergy() { return current_schedule->getEnergy(); };

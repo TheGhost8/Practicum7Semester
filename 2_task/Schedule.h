@@ -25,9 +25,10 @@ private:
 public:
     std::vector<std::vector<std::pair<size_t, size_t>>> schedule;
 
+    //Schedule(graph newJobGraph, char a);
     Schedule(size_t procs);
     Schedule(graph newJobGraph, size_t procs);
-    Schedule(const Schedule &copied_schedule);
+    // Schedule(const Schedule &copied_schedule);
 
     size_t getEnergy() const {
         return energy;

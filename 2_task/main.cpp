@@ -59,8 +59,12 @@ void ReadJobGraphFromFile(graph &jobGraph, std::string file_name)
 
 int main()
 {
+    std::chrono::duration<double> elapsed;
     graph jobGraph;
-    ReadJobGraphFromFile(jobGraph, "job_graph_3.txt");
+    ReadJobGraphFromFile(jobGraph, "job_graph_2.txt");
+
+
+    // Schedule a(jobGraph, 'a');
 
     AnnealingSimulation simulation(jobGraph, 4);
 
@@ -72,10 +76,11 @@ int main()
         std::cout << std::endl;
     }
 
-    // simulation.start();
-    // simulation.printBestSchedule();
-    // std::cout << "Best energy: " << std::to_string(simulation.getBestEnergy()) << std::endl;
-
+    /*
+    simulation.start();
+    simulation.printBestSchedule();
+    std::cout << "Best energy: " << std::to_string(simulation.getBestEnergy()) << std::endl;
+    */
     //simulation.printCurrentSchedule();
     //std::cout << "Best energy: " << std::to_string(simulation.getCurrentEnergy()) << std::endl;
     /*
@@ -87,37 +92,41 @@ int main()
     */
 
     AnnealingSimulation answer(jobGraph, 4);
+    std::cout << "Start energy: " << std::to_string(answer.getBestEnergy()) << std::endl;
     size_t lastUpdated = 0, numThreads = 8;
-    std::vector<AnnealingSimulation> solvers;
+    std::vector<std::unique_ptr<AnnealingSimulation>> solvers;
     for (size_t i = 0; i < numThreads; i++) {
-        solvers.emplace_back(jobGraph, 4);
+        solvers.emplace_back(std::make_unique<AnnealingSimulation>(jobGraph, 4));
     }
+    auto timeStart = std::chrono::high_resolution_clock::now();
     while (lastUpdated <= max_iterations) {
         std::vector<std::thread> threadPool;
 
         for (size_t i = 0; i < numThreads; i++) {
-            threadPool.emplace_back([&solvers](size_t i) {solvers[i].start();}, i);
+            threadPool.emplace_back([&solvers](size_t i) {solvers[i]->start();}, i);
         }
         for (auto& thread : threadPool) {
             thread.join();
         }
 
         for (auto& solver : solvers) {
-            if (answer.getBestEnergy() > solver.getBestEnergy()) {
+            if (answer.getBestEnergy() > solver->getBestEnergy()) {
                 lastUpdated = 0;
-                answer = solver;
+                answer = *solver;
             }
         }
 
         for (auto& i : solvers) {
-            i.updateSchedules(answer);
+            i->updateSchedules(answer);
         }
         lastUpdated++;
     }
+    auto timeFinish = std::chrono::high_resolution_clock::now();
+    elapsed = timeFinish - timeStart;
+    std::cout << "Seconds elapsed: " << elapsed.count() << " s\n";
+
     answer.printBestSchedule();
     std::cout << "Best energy: " << std::to_string(answer.getBestEnergy()) << std::endl;
-
-    // valgrid dtdb thread debug
 
     return 0;
 }
